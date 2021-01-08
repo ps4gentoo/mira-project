@@ -1,7 +1,6 @@
 # CHANGEME: Default Orbis Version
 ifeq ($(MIRA_PLATFORM),)
-MIRA_PLATFORM := MIRA_PLATFORM_ORBIS_BSD_505
-# $(error No firmware version set for MIRA_PLATFORM)
+$(error No firmware version set for MIRA_PLATFORM)
 endif
 
 # Check to see if we are building in CI/Checking mode
@@ -13,17 +12,19 @@ endif
 # Project name
 PROJ_NAME := MiraLoader
 
-# C++ compiler
-CPPC := clang
-
-# Linker
-LNK := ld # ps4-ld, we are compiling for the kernel so this is not going to use the OpenOrbis userland linker
-
-# C compiler
-CC := clang
-
-# Archiver
-AS := llvm-ar
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+CPPC	:=	clang++	# C++ compiler
+LNK		:= 	ld		# Linker
+CC		:=	clang 	# C compiler
+AS		:=	llvm-ar # Archiver
+endif
+ifeq ($(UNAME_S),Darwin)
+CPPC	:=	/usr/local/opt/llvm/bin/clang++
+LNK		:= /usr/local/opt/llvm/bin/ld.lld
+CC		:=	/usr/local/opt/llvm/bin/clang
+AS		:=	/usr/local/opt/llvm/bin/llvm-ar
+endif
 
 # Objcopy
 OBJCOPY := objcopy
@@ -59,7 +60,7 @@ LIBS :=
 C_DEFS := -D_KERNEL=1 -D_DEBUG -D_STANDALONE -D"MIRA_PLATFORM=${MIRA_PLATFORM}" -DMIRA_UNSUPPORTED_PLATFORMS -D__LP64__ -D_M_X64 -D__amd64__ -D__BSD_VISIBLE
 
 # C++ Flags, -02 Optimizations break shit badly
-CFLAGS := $(I_DIRS) $(C_DEFS) -fpie -fPIC -m64 -std=c++17 -O0 -fno-builtin -nodefaultlibs -nostdlib -nostdinc -fcheck-new -ffreestanding -fno-strict-aliasing -fno-exceptions -fno-asynchronous-unwind-tables -Wall -Werror -Wno-unknown-pragmas
+CFLAGS := $(I_DIRS) $(C_DEFS) -fpie -fPIC -m64 -std=c++17 -O0 -fno-builtin -nodefaultlibs -nostdlib -nostdinc -fcheck-new -ffreestanding -fno-strict-aliasing -fno-exceptions -fno-asynchronous-unwind-tables -Wall -Werror -Wno-unknown-pragmas -mno-red-zone
 
 # Assembly flags
 SFLAGS := -fPIE -m64 -nodefaultlibs -nostdlib
