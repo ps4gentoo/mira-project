@@ -13,7 +13,7 @@ jobs:
 
     steps:
         # Checkout the repository
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         # Install required stuff needed to build Mira
       - name: preinstall
         run: sudo apt install build-essential git clang lldb clang-tidy clang-tools cppcheck
@@ -32,12 +32,12 @@ jobs:
       - name: make 5.05 elf
         run: cd kernel; MIRA_PLATFORM=MIRA_PLATFORM_ORBIS_BSD_505 ADD_GIT_HASH=TRUE MIRA_CHECKS=TRUE make
       - name: Upload 5.05 loader
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: MiraLoader_Orbis_MIRA_PLATFORM_ORBIS_BSD_505.bin
           path: loader/build/MiraLoader_Orbis_MIRA_PLATFORM_ORBIS_BSD_505.bin
       - name: Upload 5.05 elf
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Mira_Orbis_MIRA_PLATFORM_ORBIS_BSD_505.elf
           path: kernel/build/Mira_Orbis_MIRA_PLATFORM_ORBIS_BSD_505.elf
